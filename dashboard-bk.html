@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Data Diff Dashboard</title>
+<style>
+.centered {
+	text-align: center;
+}
+
+.pass {
+	color: green;
+}
+
+.fail {
+	color: red;
+}
+</style>
+<script>
+
+function loadTestCycles() {
+
+    let date = document.getElementById("execDate").value;
+
+    fetch("/dashboard/by-date?date=" + date)
+        .then(response => response.json())
+        .then(data => {
+
+            let dropdown = document.getElementById("cycleNumbers");
+
+            dropdown.innerHTML = '<option>Select Test Cycle</option>';
+
+            data.forEach(cycle => {
+                let option = document.createElement("option");
+                option.value = cycle;
+                option.text = cycle;
+                dropdown.appendChild(option);
+            });
+
+        });
+}
+
+function loadTestDetails() {
+
+    let cycleNumber = document.getElementById("cycleNumbers").value;
+
+    fetch("/dashboard/details?cycleNumber=" + cycleNumber)    
+        .then(response => response.json())
+        .then(testDetail => {
+        	let summaryTable = document.getElementById("summary");
+        	
+        	console.log(testDetail);
+        });
+    
+}
+
+</script>
+
+</head>
+
+<body>
+
+	<h2 class="centered">Data Diff Dashboard</h2>
+
+	<label>Select Date</label>
+	<input type="date" id="execDate" onchange="loadTestCycles()" />
+
+	<br>
+	<br>
+
+	<label>Test Cycle</label>
+
+	<select id="cycleNumbers" onchange="loadTestDetails()">
+		<option>Select Test Cycle</option>
+	</select>
+
+	<br>
+	<br>
+
+	<h3>Test Summary</h3>
+	
+	<table id="summary" border="1">
+	<!--
+		<tr>
+			<th>Test Case</th>
+			<th>Status</th>
+		</tr>
+
+		<tr th:each="test : ${tests}">
+			<td th:text="${test.name}"></td>
+
+			<td><span th:if="${test.status == 'PASS'}" class="pass">PASS</span>
+
+				<a th:if="${test.status == 'FAIL'}"
+				th:href="@{/tests/{name}(name=${test.name})}" class="fail"> FAIL
+			</a></td>
+
+		</tr>
+	-->
+	
+	</table>
+
+
+</body>
+</html>

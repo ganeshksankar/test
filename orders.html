@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Orders</title>
+
+<script>
+
+function loadOrders() {
+
+    let date = document.getElementById("orderDate").value;
+
+    fetch("/orders/by-date?date=" + date)
+        .then(response => response.json())
+        .then(data => {
+
+            let dropdown = document.getElementById("orderNumbers");
+
+            dropdown.innerHTML = "<option>Select Order</option>";
+
+            data.forEach(order => {
+                let option = document.createElement("option");
+                option.value = order;
+                option.text = order;
+                dropdown.appendChild(option);
+            });
+
+        });
+}
+
+function loadOrderDetails() {
+
+    let orderNumber = document.getElementById("orderNumbers").value;
+
+    fetch("/orders/details?orderNumber=" + orderNumber)
+        .then(response => response.json())
+        .then(order => {
+
+            document.getElementById("customer").innerText = order.customerName;
+            document.getElementById("amount").innerText = order.totalAmount;
+            document.getElementById("date").innerText = order.orderDate;
+
+        });
+}
+
+</script>
+
+</head>
+
+<body>
+
+<h2>Search Orders</h2>
+
+<label>Select Date</label>
+<input type="date" id="orderDate" onchange="loadOrders()"/>
+
+<br><br>
+
+<label>Order Numbers</label>
+
+<select id="orderNumbers" onchange="loadOrderDetails()">
+<option>Select Order</option>
+</select>
+
+<br><br>
+
+<h3>Order Details</h3>
+
+<p>Customer: <span id="customer"></span></p>
+<p>Amount: <span id="amount"></span></p>
+<p>Date: <span id="date"></span></p>
+
+</body>
+</html>
